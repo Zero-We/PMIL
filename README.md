@@ -1,6 +1,6 @@
 # Prototypical multiple instance learning for predicting lymph node metastasis of breast cancer from whole-slide pathological images
 
-<img src="https://github.com/Zero-We/PMIL/blob/main/docs/pmil-overview.png" width="800px">
+<img src="https://github.com/Zero-We/PMIL/blob/main/docs/pmil-overview.png">
 
 
 ## Introduction
