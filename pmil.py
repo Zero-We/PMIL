@@ -20,38 +20,32 @@ torch.cuda.manual_seed_all(24)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-parser = argparse.ArgumentParser(description='Clustering the WSIs feature extracted from IS paradigm')
-parser.add_argument('--train_lib', type=str, default='lib/select_1000_patches_trainset_valid3.ckpt',
-                    help='path to train MIL library binary')
-parser.add_argument('--val_lib', type=str, default='lib/select_1000_patches_valset_valid3.ckpt',
-                    help='path to validation MIL library binary. If present.')
-parser.add_argument('--test_lib', type=str, default='lib/select_1000_patches_testset_valid3.ckpt',
-                    help='path to validation MIL library binary. If present.')
-parser.add_argument('--train_feature_dir', type=str, default='feat/select_1000_trainset_patch_feature_valid3/',
-                    help='name of train set output directory')
-parser.add_argument('--val_feature_dir', type=str, default='feat/select_1000_valset_patch_feature_valid3/',
-                    help='name of test set output directory')
-parser.add_argument('--test_feature_dir', type=str, default='feat/select_1000_testset_patch_feature_valid3/',
-                    help='name of test set output directory')
-parser.add_argument('--output', type=str, default='result')
+parser = argparse.ArgumentParser(description='Generating slide embedding features through prototypes and classification')
+parser.add_argument('--train_lib', type=str, default='lib/train.ckpt',
+                    help='lib to save wsi id of train set')
+parser.add_argument('--val_lib', type=str, default='lib/val.ckpt',
+                    help='lib to save wsi id of valid set')
+parser.add_argument('--test_lib', type=str, default='lib/test.ckpt',
+                    help='lib to save wsi id of test set')
+parser.add_argument('--feature_dir', type=str, default='feat',
+                    help='feature directory')
+parser.add_argument('--output', type=str, default='result', help='output directory')
 parser.add_argument('--num_cluster', type=int, help='number of cluster')
-parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size (default: 512)')
+parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size')
 parser.add_argument('--nepochs', type=int, default=30, help='number of epochs')
 parser.add_argument('--lr', type=float, default=1e-4, help='learning rate')
-parser.add_argument('--workers', default=4, type=int, help='number of data loading workers (default: 4)')
-parser.add_argument('--test_every', default=5, type=int, help='test on val every (default: 10)')
+parser.add_argument('--workers', default=4, type=int, help='number of data loading workers')
 parser.add_argument('--weights', default=0.5, type=float,
                     help='unbalanced positive class weight (default: 0.5, balanced classes)')
-parser.add_argument('--global_cluster', type=str, default='cluster/prototypes_features_20x256_valid3.npy')
-parser.add_argument('--pmil_model', type=str, default='model/pmil_model_40x256.pth', help='path to pretrained model')
-parser.add_argument('--mil_model', type=str, default='model/mil_model_40x256.pth')
-parser.add_argument('--s', default=5, type=int, help='how many top k patchess to consider (default: 5)')
+parser.add_argument('--global_cluster', type=str, default='cluster/prototypes_features_40x256.npy')
+parser.add_argument('--pmil_model', type=str, default='model/pmil_model.pth', help='path to pretrained model')
+parser.add_argument('--mil_model', type=str, default='model/checkpoint_best_40x256.pth')
+parser.add_argument('--s', default=5, type=int, help='how many top k patchess to consider')
 parser.add_argument('--save_model', default=False, action='store_true')
 parser.add_argument('--load_model', default=False, action='store_true')
 parser.add_argument('--is_test', default=False, action='store_true')
-parser.add_argument('--device', type=int, default=1)
+parser.add_argument('--device', type=int, default=0)
 parser.add_argument('--suffix', type=str, default='.csv')
-parser.add_argument('--patch_dir', type=str, default='/mnt/MedImg/SLN/patch/40x256/')
 
 global args
 args = parser.parse_args()
@@ -94,18 +88,18 @@ def main():
 
     # Loading dataset
     if args.train_lib:
-        train_dset = GlobalDataset(feature_dir=args.train_feature_dir, libraryfile=args.train_lib, is_train=True)
+        train_dset = GlobalDataset(feature_dir=args.feature_dir, libraryfile=args.train_lib, is_train=True)
         train_loader = torch.utils.data.DataLoader(
             train_dset,
             batch_size=1, shuffle=True,
             num_workers=1, pin_memory=False)
     if args.val_lib:
-        val_dset = GlobalDataset(feature_dir=args.val_feature_dir, libraryfile=args.val_lib, is_train=False)
+        val_dset = GlobalDataset(feature_dir=args.feature_dir, libraryfile=args.val_lib, is_train=False)
         val_loader = torch.utils.data.DataLoader(
             val_dset,
             batch_size=1, shuffle=False,
             num_workers=1, pin_memory=False)
-    test_dset = GlobalDataset(feature_dir=args.test_feature_dir, libraryfile=args.test_lib, is_train=False)
+    test_dset = GlobalDataset(feature_dir=args.feature_dir, libraryfile=args.test_lib, is_train=False)
     test_loader = torch.utils.data.DataLoader(
         test_dset,
         batch_size=1, shuffle=False,
