@@ -8,13 +8,13 @@ Computerized identification of lymph node metastasis (LNM) from whole-slide path
 
 
 ## Dataset
-1. **Camelyon16**  
-* Camelyon16 is a public challenge dataset of sentinel lymph
+* **Camelyon16**  
+Camelyon16 is a public challenge dataset of sentinel lymph
 node biopsy of early-stage breast cancer, which includes 270 H&E-stained WSIs for training and 129 for testing (48 LNM-positive and 81 LNM-negative), collected from two medical centers.   
-* Download from [here](https://camelyon17.grand-challenge.org/Data/).
+Download from [here](https://camelyon17.grand-challenge.org/Data/).
 
-2. **Zbraln**  
-* The Zhujiang Breast Cancer Lymph Node (Zbraln) was created by ourselves. Specifically, we collected 635 H&E-stained glass slides of dissected ALNs.
+* **Zbraln**  
+The Zhujiang Breast Cancer Lymph Node (Zbraln) was created by ourselves. Specifically, we collected 635 H&E-stained glass slides of dissected ALNs.
 
 ## Evaluation
     python pmil.py --train_lib 'lib/train.ckpt' --val_lib '' --test_lib 'lib/test.ckpt' --train_feature_dir 'feat' --test_feature_dir 'feat' --output 'result' --global_cluster 'cluster/prototypes_features_40x256.npy' --mil_model 'model/checkpoint_best_40x256.pth' --pmil 'model/pmil_model.pth' --suffix '.csv' --load_model --is_test
