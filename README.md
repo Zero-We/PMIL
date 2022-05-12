@@ -14,7 +14,8 @@ node biopsy of early-stage breast cancer, which includes 270 H&E-stained WSIs fo
 Download from [here](https://camelyon17.grand-challenge.org/Data/).
 
 * **Zbraln**  
-The Zhujiang Breast Cancer Lymph Node (Zbraln) was created by ourselves. Specifically, we collected 635 H&E-stained glass slides of dissected ALNs.
+The Zhujiang Breast Cancer Lymph Node (Zbraln) was created by ourselves. Specifically, we collected 635 H&E-stained glass slides of dissected ALNs.  
+We only provide a few whole slide images data here due to the privacy policy. [Google Drive](https://drive.google.com/drive/folders/1bQBFaTeGDAzhYg6w6GJfvCnzE-atvUyT?usp=sharing)|[Baidu Cloud](https://pan.baidu.com/s/1r-D7o1J9pmebOSi9s0Bm5w) (fzts)
 
 ## Evaluation
     python pmil.py --train_lib 'lib/train.ckpt' --val_lib '' --test_lib 'lib/test.ckpt' --train_feature_dir 'feat' --test_feature_dir 'feat' --output 'result' --global_cluster 'cluster/prototypes_features_40x256.npy' --mil_model 'model/checkpoint_best_40x256.pth' --pmil 'model/pmil_model.pth' --suffix '.csv' --load_model --is_test
