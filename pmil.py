@@ -266,7 +266,6 @@ class GlobalDataset(data.Dataset):
         self.slidenames = [os.path.basename(slide).split('.')[0] for slide in lib['slides']]
         gt_targets = lib['targets']
         self.targets = self._get_label(gt_targets)
-        self.grids = lib['grid']
         self.micrometastasis = np.load('micrometastasis/micro_wsi_names_trainset.npy')
         self.micrometastasis = self.micrometastasis.tolist()
         self.features = self._get_features()
