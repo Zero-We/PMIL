@@ -17,7 +17,7 @@ Download from [here](https://camelyon17.grand-challenge.org/Data/).
 
 * **Zbraln**  
 The Zhujiang Breast Cancer Lymph Node (Zbraln) was created by ourselves. Specifically, we collected 635 H&E-stained glass slides of dissected ALNs.  
-We only provide a few whole slide images data here due to the privacy policy. [[Google Drive]](https://drive.google.com/drive/folders/1kfib8H-4jhNzwj-_LDmUGVtjCv3Lg6zT?usp=sharing) | [[Baidu Cloud]](https://pan.baidu.com/s/1r-D7o1J9pmebOSi9s0Bm5w) (fzts)
+We only provide a few whole slide images data here due to the privacy policy. [[Google Drive]](https://drive.google.com/drive/folders/1kfib8H-4jhNzwj-_LDmUGVtjCv3Lg6zT?usp=sharing) | [[Baidu Cloud]](https://pan.baidu.com/s/1OQJM8Tp7y1RlRIPUKdjqIA) (fzts)
 
 ## Evaluation
 ~~~
