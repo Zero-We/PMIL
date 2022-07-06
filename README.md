@@ -25,8 +25,8 @@ We only provide a few whole slide images data here due to the privacy policy. [[
 ~~~
 
 ## Visualization
-Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that 
-<img src="https://github.com/Zero-We/PMIL/blob/main/vis/test_001.png" width="350px" align="left">
+Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention
+<img src="https://github.com/Zero-We/PMIL/blob/main/vis/test_001.png" width="350px">
 
 
 ## Reference
