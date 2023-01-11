@@ -10,7 +10,7 @@ import torch.utils.data as data
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-from model_pmil import IClassifier, BClassifier, PBMIL, Euclidean_Similarity
+from model.model_pmil import IClassifier, BClassifier, PBMIL, Euclidean_Similarity
 
 
 np.random.seed(24)
