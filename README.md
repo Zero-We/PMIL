@@ -34,7 +34,10 @@ python max-mil.py --save_model --save_index --save_feat
 
 2. Affinity propagation clustering algorithm is used to capture the typical pathological patterns, which we call prototypes. To obtain the prototypes on Camelyon16 dataset, you can run `python cluster.py`.  
 
-3.  
+3. Train the PMIL framework that encodes WSI by its compositions in terms of the frequencies of occurence of prototypes found inside. Here, we use patch features match against prototypes to get soft-assignment histogram, andd histograms of each patch in WSI will be aggregated by selective pooling module:  
+~~~
+python pmil.py --save_model
+~~~
 
 ## Evaluation  
 You can evaluate the performance of PMIL at 40x magnification on Camelyon16 dataset by following command: 
