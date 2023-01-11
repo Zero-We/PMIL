@@ -39,7 +39,7 @@ parser.add_argument('--weights', default=0.5, type=float,
                     help='unbalanced positive class weight (default: 0.5, balanced classes)')
 parser.add_argument('--global_cluster', type=str, default='cluster/prototypes_features_40x256.npy')
 parser.add_argument('--pmil_model', type=str, default='model/pmil_model.pth', help='path to pretrained model')
-parser.add_argument('--mil_model', type=str, default='model/checkpoint_best_40x256.pth')
+parser.add_argument('--mil_model', type=str, default='model/mil.pth')
 parser.add_argument('--s', default=5, type=int, help='how many top k patchess to consider')
 parser.add_argument('--save_model', default=False, action='store_true')
 parser.add_argument('--load_model', default=False, action='store_true')
