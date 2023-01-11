@@ -19,9 +19,13 @@ Download from [here](https://camelyon17.grand-challenge.org/Data/).
 The Zhujiang Breast Cancer Lymph Node (Zbraln) was created by ourselves. Specifically, we collected 635 H&E-stained glass slides of dissected ALNs.  
 We only provide a few whole slide images data here due to the privacy policy. [[Google Drive]](https://drive.google.com/drive/folders/1kfib8H-4jhNzwj-_LDmUGVtjCv3Lg6zT?usp=sharing) | [[Baidu Cloud]](https://pan.baidu.com/s/1OQJM8Tp7y1RlRIPUKdjqIA) (fzts)
 
-## Evaluation
+## Training  
+
+
+## Evaluation  
+You can evaluate the performance of PMIL at 40x magnification on Camelyon16 dataset by following command: 
 ~~~
-    python pmil.py --train_lib 'lib/train.ckpt' --val_lib '' --test_lib 'lib/test.ckpt' --train_feature_dir 'feat' --test_feature_dir 'feat' --output 'result' --global_cluster 'cluster/prototypes_features_40x256.npy' --mil_model 'model/checkpoint_best_40x256.pth' --pmil 'model/pmil_model.pth' --suffix '.csv' --load_model --is_test
+python pmil.py --load_model --is_test
 ~~~
 
 ## Visualization
@@ -29,6 +33,9 @@ Interpretablity is important to deep learning based algorithms for medical appli
 
 <img src="https://github.com/Zero-We/PMIL/blob/main/vis/test_001.png" width="350px">
 
+
+## License  
+This code is made available under the GPLv3 License and is available for non-commercial academic purposes.
 
 ## Reference  
 If you find our work useful in your research or if you use parts of this code please consider citing our paper.
