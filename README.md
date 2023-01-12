@@ -57,21 +57,29 @@ You can evaluate the performance of PMIL at 40x magnification on Camelyon16 data
 ~~~
 python pmil.py --load_model --is_test
 ~~~  
-  
-  
-  
+<br/>
 
 ## Visualization
 1. We illustare the prototype discovery on Camelyon16 dataset here. The above row of images show the discovered prototypes, and the colors of bounding boxes are matched with the colors of each cluster in the below row. The below shows intra-slide patch clustering results on two WSIs, the left is LNM-positive and the right is LNM-negative.  
 <div align=center><img src="https://github.com/Zero-We/PMIL/blob/main/docs/prototype-discovery.png" width="800px"></div>
+<br/>
 
-2. Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention  
-
-<img src="https://github.com/Zero-We/PMIL/blob/main/vis/test_001.png" width="350px">
-
+2. Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention map can completely highlight the tumor regions, which are consistent with the ground truth annotations.  
+<div align=center><img src="https://github.com/Zero-We/PMIL/blob/main/vis/test_001.png" width="350px"></div>
+<br/>
 
 ## License  
 This code is made available under the GPLv3 License and is available for non-commercial academic purposes.
+<br/>
 
-## Reference  
-If you find our work useful in your research or if you use parts of this code please consider citing our paper.
+## Citation  
+If you find our work useful in your research or if you use parts of this code please consider citing our paper.  
+~~~
+@article{yu2022prototypical,
+  title={Prototypical multiple instance learning for predicting lymph node metastasis of breast cancer from whole-slide pathological images},
+  author={Yu, Jin-Gang and Wu, Zihao and Ming, Yu and Deng, Shule and Li, Yuanqing and Ou, Caifeng and He, Chunjiang and Wang Baiye and Zhang, Pusheng and Wang, Yu},
+  journal={Medical Image Analysis},
+  year={2022},
+  publisher={Elsevier}
+}
+~~~  
