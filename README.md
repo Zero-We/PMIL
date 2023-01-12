@@ -5,12 +5,11 @@
 
 ## Introduction
 Computerized identification of lymph node metastasis (LNM) from whole-slide pathological images (WSIs) can largely benefit the therapy decision and prognosis of breast cancer. Besides the general challenges of computational pathology, including extra high resolution, very expensive fine-grained annotation and significant inter-tumoral heterogeneity, one particular difficulty with this task lies in identifying metastasized tumors with tiny foci (called micro-metastasis). In this study, we introduce a weakly supervised method, called Prototypical Multiple Instance Learning (PMIL), to learn to predict lymph node metastasis of breast cancer from whole slide pathological images with only slide-level class labels. Firstly, PMIL discovers a collection of so-called prototypes from the training data by unsupervised clustering. Secondly, the prototypes are matched against the constitutive patches in the WSI, and the resultant similarity scores are aggregated into a soft-assignment histogram describing the statistical distribution of the prototypes in the WSI, which is taken as the slide features. Finally, WSI classification is accomplished by using the slide features.
+<br/>
 
 ## Model
 The trained model weights and precomputed patch feature vectors are provided here （[[Google Drive]](https://drive.google.com/drive/folders/1kfib8H-4jhNzwj-_LDmUGVtjCv3Lg6zT?usp=sharing) | [[Baidu Cloud]](https://pan.baidu.com/s/1OQJM8Tp7y1RlRIPUKdjqIA) (fzts)）. You can download these files and drag `pmil_model.pth` and `pmil_model_simclr.pth` to  the `model` directory, drag `mil-feat` and `simclr-feat` to the `feat` directory.  
-  
-  
-  
+<br/>
 
 ## Dataset
 * **Camelyon16**  
@@ -21,9 +20,7 @@ Download from [here](https://camelyon17.grand-challenge.org/Data/).
 * **Zbraln**  
 The Zhujiang Breast Cancer Lymph Node (Zbraln) was created by ourselves. Specifically, we collected 635 H&E-stained glass slides of dissected ALNs.  
 We only provide a few whole slide images data here due to the privacy policy. [[Google Drive]](https://drive.google.com/drive/folders/1kfib8H-4jhNzwj-_LDmUGVtjCv3Lg6zT?usp=sharing) | [[Baidu Cloud]](https://pan.baidu.com/s/1OQJM8Tp7y1RlRIPUKdjqIA) (fzts)  
-  
-  
-  
+<br/>
 
 ## Training  
 1. The patch-level feature encoder will be initialized by training the standard instance-space MIL with max-pooling. Part of our code refer to: (Campanella et al., 2019), you can refer to [here](https://github.com/MSKCC-Computational-Pathology/MIL-nature-medicine-2019). And the input data should be stored in dictionary with `torch.save()` in `.ckpt` file format including following keys:  
