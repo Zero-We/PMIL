@@ -23,7 +23,7 @@ We only provide a few whole slide images data here due to the privacy policy. [[
 <br/>
 
 ## Training  
-###1. The patch-level feature encoder will be initialized by training the standard instance-space MIL with max-pooling. Part of our code refer to: (Campanella et al., 2019), you can refer to [here](https://github.com/MSKCC-Computational-Pathology/MIL-nature-medicine-2019). And the input data should be stored in dictionary with `torch.save()` in `.ckpt` file format including following keys:  
+**1**. The patch-level feature encoder will be initialized by training the standard instance-space MIL with max-pooling. Part of our code refer to: (Campanella et al., 2019), you can refer to [here](https://github.com/MSKCC-Computational-Pathology/MIL-nature-medicine-2019). And the input data should be stored in dictionary with `torch.save()` in `.ckpt` file format including following keys:  
 * `'slides'`: a list of paths to WSIs.  
 * `'grid'`: a list of patch coordinates tuple (x,y). Size of the list equal to number of slides, and the size of each sublist is equal to the numbers of patches in each slide.  
 * `'target'`: a list of slide-level target.  
