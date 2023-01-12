@@ -27,14 +27,13 @@ parser.add_argument('--val_lib', type=str, default='lib/val.ckpt',
                     help='lib to save wsi id of valid set')
 parser.add_argument('--test_lib', type=str, default='lib/test.ckpt',
                     help='lib to save wsi id of test set')
-parser.add_argument('--feature_dir', type=str, default='feat',
-                    help='feature directory')
+parser.add_argument('--feat_dir', type=str, default='feat', help='path to save features')
 parser.add_argument('--output', type=str, default='result', help='output directory')
 parser.add_argument('--num_cluster', type=int, help='number of cluster')
-parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='mini-batch size')
+parser.add_argument('--workers', default=1, type=int, help='number of data loading workers')
 parser.add_argument('--nepochs', type=int, default=30, help='number of epochs')
 parser.add_argument('--lr', type=float, default=1e-4, help='learning rate')
-parser.add_argument('--workers', default=4, type=int, help='number of data loading workers')
 parser.add_argument('--weights', default=0.5, type=float,
                     help='unbalanced positive class weight (default: 0.5, balanced classes)')
 parser.add_argument('--global_cluster', type=str, default='cluster/prototypes_features_40x256.npy')
@@ -45,7 +44,7 @@ parser.add_argument('--save_model', default=False, action='store_true')
 parser.add_argument('--load_model', default=False, action='store_true')
 parser.add_argument('--is_test', default=False, action='store_true')
 parser.add_argument('--device', type=int, default=0)
-parser.add_argument('--suffix', type=str, default='.csv')
+parser.add_argument('--feat_format', type=str, choices = ['.csv', '.npy', '.pt'], default='.csv')
 
 global args
 args = parser.parse_args()
@@ -63,8 +62,10 @@ def main():
     elif os.path.basename(args.global_cluster).split('.')[-1] == 'npz':
         data = np.load(args.global_cluster)
         prototypes_features = data['feature']
+    
     args.num_cluster = prototypes_features.shape[0]
-    print(args.num_cluster)
+    print(f'There are {args.num_cluster} prototypes!')
+    
     prototypes_features = torch.from_numpy(prototypes_features)
     prototypes_features = prototypes_features.cuda()
 
@@ -88,22 +89,22 @@ def main():
 
     # Loading dataset
     if args.train_lib:
-        train_dset = GlobalDataset(feature_dir=args.feature_dir, libraryfile=args.train_lib, is_train=True)
+        train_dset = GlobalDataset(feat_dir=args.feat_dir, libraryfile=args.train_lib, is_train=True)
         train_loader = torch.utils.data.DataLoader(
             train_dset,
-            batch_size=1, shuffle=True,
-            num_workers=1, pin_memory=False)
+            batch_size=args.batch_size, shuffle=True,
+            num_workers=args.workers, pin_memory=False)
     if args.val_lib:
-        val_dset = GlobalDataset(feature_dir=args.feature_dir, libraryfile=args.val_lib, is_train=False)
+        val_dset = GlobalDataset(feat_dir=args.feat_dir, libraryfile=args.val_lib, is_train=False)
         val_loader = torch.utils.data.DataLoader(
             val_dset,
-            batch_size=1, shuffle=False,
-            num_workers=1, pin_memory=False)
-    test_dset = GlobalDataset(feature_dir=args.feature_dir, libraryfile=args.test_lib, is_train=False)
+            batch_size=args.batch_size, shuffle=False,
+            num_workers=args.workers, pin_memory=False)
+    test_dset = GlobalDataset(feat_dir=args.feat_dir, libraryfile=args.test_lib, is_train=False)
     test_loader = torch.utils.data.DataLoader(
         test_dset,
-        batch_size=1, shuffle=False,
-        num_workers=1, pin_memory=False)
+        batch_size=args.batch_size, shuffle=False,
+        num_workers=args.workers, pin_memory=False)
 
     prototype = prototypes_features
     # loop throuh epochs
@@ -119,7 +120,7 @@ def main():
             targets = np.array(test_dset.targets)
             print('Testing Loss: {:.4f}\tAcc: {:.4f}\tAUC: {:.4f}'.format(val_loss, val_acc, val_auc))
 
-            ## Save best model
+            ## Save model
             if val_acc >= best_acc:
                 best_acc = val_acc
                 best_auc = val_auc
@@ -182,8 +183,7 @@ def train(run, prototype, loader, model, criterion, optimizer):
     targets = np.array(targets)
     fpr, tpr, thresholds = roc_curve(y_true=targets, y_score=probs, pos_label=1)
     roc_auc = auc(fpr, tpr)
-    _, _, threshold_optimal = optimal_thresh(fpr, tpr, thresholds)
-    preds = [1 if x >= threshold_optimal else 0 for x in probs]
+    preds = [1 if x >= 0.5 else 0 for x in probs]
     preds = np.array(preds)
     eq = np.equal(targets, preds)
     acc = float(eq.sum()) / targets.shape[0]
@@ -237,8 +237,7 @@ def test(run, prototype, loader, model, criterion):
     targets = np.array(targets)
     fpr, tpr, thresholds = roc_curve(y_true=targets, y_score=probs, pos_label=1)
     roc_auc = auc(fpr, tpr)
-    _, _, threshold_optimal = optimal_thresh(fpr, tpr, thresholds)
-    preds = [1 if x >= threshold_optimal else 0 for x in probs]
+    preds = [1 if x >= 0.5 else 0 for x in probs]
     preds = np.array(preds)
     eq = np.equal(targets, preds)
     acc = float(eq.sum()) / targets.shape[0]
@@ -258,17 +257,15 @@ class GlobalDataset(data.Dataset):
     for i in range(1, 513):
         columns.append('feature' + str(i))
 
-    def __init__(self, feature_dir='', libraryfile='', is_train=True):
-        self.feature_dir = feature_dir
+    def __init__(self, feat_dir='', libraryfile='', is_train=True):
+        self.feat_dir = feat_dir
         self.is_train = is_train
-        # self.feature_files = os.listdir(self.feature_dir)
+
         lib = torch.load(libraryfile)
         self.slidenames = [os.path.basename(slide).split('.')[0] for slide in lib['slides']]
         gt_targets = lib['targets']
         self.targets = self._get_label(gt_targets)
-        self.micrometastasis = np.load('micrometastasis/micro_wsi_names_trainset.npy')
-        self.micrometastasis = self.micrometastasis.tolist()
-        self.features = self._get_features()
+        self.feats = self._get_feats()
 
     def _get_label(self, gt_targets):
         targets = []
@@ -277,23 +274,26 @@ class GlobalDataset(data.Dataset):
             targets.append(gt_targets[idx])
         return targets
 
-    def _get_features(self):
-        all_features = []
+    def _get_feats(self):
+        feats = []
         for i, slidename in enumerate(self.slidenames):
-            if args.suffix == '.csv':
-                df = pd.read_csv(os.path.join(self.feature_dir, slidename + '.csv'))
-                features = df[self.columns].values
-            elif args.suffix == '.npy':
-                features = np.load(os.path.join(self.feature_dir, slidename + '.npy'))
-            features = features.astype(np.float32)
-            all_features.append(features)
-        return all_features
+            if args.feat_format == '.csv':
+                df = pd.read_csv(os.path.join(self.feat_dir, slidename + '.csv'))
+                feat = df[self.columns].values
+            elif args.feat_format == '.npy':
+                feat = np.load(os.path.join(self.feat_dir, slidename + '.npy'))
+            elif args.feat_format == '.pt':
+                feat = torch.load(os.path.join(self.feat_dir, slidename + '.pt'))
+                feat = feat.numpy()
+            feat = feat.astype(np.float32)
+            feats.append(feat)
+        return feats
 
-    def __getitem__(self, index):
-        features = self.features[index]
-        target = self.targets[index]
-        patient_id = self.slidenames[index]
-        return features, target, patient_id
+    def __getitem__(self, idx):
+        feat = self.feats[idx]
+        target = self.targets[idx]
+        patient_id = self.slidenames[idx]
+        return feat, target, patient_id
 
     def __len__(self):
         return len(self.slidenames)
