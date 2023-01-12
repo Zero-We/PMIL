@@ -49,7 +49,10 @@ python pmil.py --load_model --is_test
 ~~~
 
 ## Visualization
-Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention  
+1. We illustare the prototype discovery on Camelyon16 dataset here. The above row of images show the discovered prototypes, and the colors of bounding boxes are matched with the colors of each cluster in the below row. The below shows intra-slide patch clustering results on two WSIs, the left is LNM-positive and the right is LNM-negative.  
+<img src="https://github.com/Zero-We/PMIL/blob/main/docs/prototype-discovery.png" width="700px" div align=center />
+
+2. Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention  
 
 <img src="https://github.com/Zero-We/PMIL/blob/main/vis/test_001.png" width="350px">
 
