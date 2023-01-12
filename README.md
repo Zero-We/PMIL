@@ -52,7 +52,7 @@ python pmil.py --save_model
   
   
 
-## Evaluation  
+## Inference  
 You can evaluate the performance of PMIL at 40x magnification on Camelyon16 dataset by following command: 
 ~~~
 python pmil.py --load_model --is_test
@@ -65,7 +65,7 @@ python pmil.py --load_model --is_test
 <br/>
 
 2. Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention map can completely highlight the tumor regions, which are consistent with the ground truth annotations.  
-<div align=center><img src="https://github.com/Zero-We/PMIL/blob/main/vis/test_001.png" width="350px"></div>
+<div align=center><img src="https://github.com/Zero-We/PMIL/blob/main/docs/attention-map.png" width="800px"></div>
 <br/>
 
 ## License  
