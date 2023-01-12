@@ -35,6 +35,7 @@ parser.add_argument('--train_lib', type=str, default='lib/train.ckpt', help='lib
 parser.add_argument('--val_lib', type=str, default='lib/val.ckpt', help='lib to save wsi id of valid set')
 parser.add_argument('--test_lib', type=str, default='lib/test.ckpt', help='lib to save wsi id of test set')
 parser.add_argument('--output', type=str, default='result', help='output directory')
+parser.add_argument('--feat_dir', type=str, default='', help='path to save features')
 parser.add_argument('--batch_size', type=int, default=256, help='mini-batch size')
 parser.add_argument('--nepochs', type=int, default=30, help='number of epochs')
 parser.add_argument('--workers', default=4, type=int, help='number of data loading workers')
@@ -47,6 +48,7 @@ parser.add_argument('--lr', type=float, default=1e-4, help='learning rate')
 parser.add_argument('--patch_dir', type=str, default='')
 parser.add_argument('--save_model', default=False, action='store_true')
 parser.add_argument('--save_feat', default=False, action='store_true')
+parser.add_argument('--feat_format', type=str, choices = ['.csv', '.npy', '.pt'], default='.csv')
 parser.add_argument('--load_model', default=False, action='store_true')
 parser.add_argument('--is_test', default=False, action='store_true')
 parser.add_argument('--save_index', default=False, action='store_true')
@@ -140,8 +142,17 @@ def main():
                     for i, slide in enumerate(train_dset.slidenames):
                     slidename = '.'.join(os.path.basename(slide).split('.')[0:2])
                     feature = features[slideIDX == i, :]
-                    df = pd.DataFrame(feature, columns=columns)
-                    df.to_csv(os.path.join(args.output, f'{slidename}.csv'))
+                    
+                    # save features
+                    if args.feat_format == '.csv':
+                        df = pd.DataFrame(feature, columns=columns)
+                        df.to_csv(os.path.join(args.feat_dir, f'{slidename}.csv'))
+                    elif args.feat_format == '.npy':
+                        np.save(os.path.join(args.feat_dir, f'{slidename}.npy'), feature)
+                    elif args.feat_format == '.pt':
+                        feature = torch.from_numpy(feature)
+                        torch.save(feature, os.path.join(args.feat_dir, f'{slidename}.pt'))
+                        
             train_dset.shuffletraindata()
             loss = train(epoch, train_loader, model, criterion, optimizer)
             end = time.time()
@@ -173,9 +184,17 @@ def main():
                         for i, slide in enumerate(val_dset.slidenames):
                             slidename = '.'.join(os.path.basename(slide).split('.')[0:2])
                             feature = features[slideIDX == i, :]
-                            df = pd.DataFrame(feature, columns=columns)
-                            df.to_csv(os.path.join(args.output, f'{slidename}.csv'))
-
+                            
+                            # save features
+                            if args.feat_format == '.csv':
+                                df = pd.DataFrame(feature, columns=columns)
+                                df.to_csv(os.path.join(args.feat_dir, f'{slidename}.csv'))
+                            elif args.feat_format == '.npy':
+                                np.save(os.path.join(args.feat_dir, f'{slidename}.npy'), feature)
+                            elif args.feat_format == '.pt':
+                                feature = torch.from_numpy(feature)
+                                torch.save(feature, os.path.join(args.feat_dir, f'{slidename}.pt'))
+                
                 pred = [1 if x >= 0.5 else 0 for x in maxs]
                 fpr, tpr, thresh = roc_curve(y_true=val_dset.targets, y_score=maxs, pos_label=1)
                 roc_auc = auc(fpr, tpr)
@@ -202,8 +221,17 @@ def main():
                         for i, slide in enumerate(val_dset.slidenames):
                             slidename = '.'.join(os.path.basename(slide).split('.')[0:2])
                             feature = features[slideIDX == i, :]
-                            df = pd.DataFrame(feature, columns=columns)
-                            df.to_csv(os.path.join(args.output, f'{slidename}.csv'))
+                            
+                            # save features
+                            if args.feat_format == '.csv':
+                                df = pd.DataFrame(feature, columns=columns)
+                                df.to_csv(os.path.join(args.feat_dir, f'{slidename}.csv'))
+                            elif args.feat_format == '.npy':
+                                np.save(os.path.join(args.feat_dir, f'{slidename}.npy'), feature)
+                            elif args.feat_format == '.pt':
+                                feature = torch.from_numpy(feature)
+                                torch.save(feature, os.path.join(args.feat_dir, f'{slidename}.pt'))
+                
                 pred = [1 if x >= 0.5 else 0 for x in maxs]
                 fpr, tpr, thresh = roc_curve(y_true=test_dset.targets, y_score=maxs, pos_label=1)
                 roc_auc = auc(fpr, tpr)
@@ -414,6 +442,7 @@ class Inferencedataset(data.Dataset):
         torch.save({
             'slides': slides,
             'grid': grids,
+            'gridIDX': list(topnid),
             'targets': targets},
             os.path.join(args.output, f'{filename}.ckpt'))
             
