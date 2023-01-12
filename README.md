@@ -23,7 +23,7 @@ We only provide a few whole slide images data here due to the privacy policy. [[
 <br/>
 
 ## Training  
-**1**. The patch-level feature encoder will be initialized by training the standard instance-space MIL with max-pooling. Part of our code refer to: (Campanella et al., 2019), you can refer to [here](https://github.com/MSKCC-Computational-Pathology/MIL-nature-medicine-2019). And the input data should be stored in dictionary with `torch.save()` in `.ckpt` file format including following keys:  
+The patch-level feature encoder will be initialized by training the standard instance-space MIL with max-pooling. Part of our code refer to: (Campanella et al., 2019), you can refer to [here](https://github.com/MSKCC-Computational-Pathology/MIL-nature-medicine-2019). And the input data should be stored in dictionary with `torch.save()` in `.ckpt` file format including following keys:  
 * `'slides'`: a list of paths to WSIs.  
 * `'grid'`: a list of patch coordinates tuple (x,y). Size of the list equal to number of slides, and the size of each sublist is equal to the numbers of patches in each slide.  
 * `'target'`: a list of slide-level target.  
@@ -37,14 +37,14 @@ python max-mil.py --save_model --save_index --save_feat
 <br/>
   
 
-2. Affinity propagation clustering algorithm is used to capture the typical pathological patterns, which we call prototypes. To obtain the prototypes on Camelyon16 dataset, you can run following command:  
+Affinity propagation clustering algorithm is used to capture the typical pathological patterns, which we call prototypes. To obtain the prototypes on Camelyon16 dataset, you can run following command:  
 ~~~
 python cluster.py
 ~~~  
 <br/>
   
 
-3. Train the PMIL framework that encodes WSI by its compositions in terms of the frequencies of occurence of prototypes found inside. Here, we use patch features match against prototypes to get soft-assignment histogram, andd histograms of each patch in WSI will be aggregated by selective pooling module:  
+Train the PMIL framework that encodes WSI by its compositions in terms of the frequencies of occurence of prototypes found inside. Here, we use patch features match against prototypes to get soft-assignment histogram, andd histograms of each patch in WSI will be aggregated by selective pooling module:  
 ~~~
 python pmil.py --save_model
 ~~~  
@@ -60,11 +60,11 @@ python pmil.py --load_model --is_test
 <br/>
 
 ## Visualization
-1. We illustare the prototype discovery on Camelyon16 dataset here. The above row of images show the discovered prototypes, and the colors of bounding boxes are matched with the colors of each cluster in the below row. The below shows intra-slide patch clustering results on two WSIs, the left is LNM-positive and the right is LNM-negative.  
+We illustare the prototype discovery on Camelyon16 dataset here. The above row of images show the discovered prototypes, and the colors of bounding boxes are matched with the colors of each cluster in the below row. The below shows intra-slide patch clustering results on two WSIs, the left is LNM-positive and the right is LNM-negative.  
 <div align=center><img src="https://github.com/Zero-We/PMIL/blob/main/docs/prototype-discovery.png" width="800px"></div>
 <br/>
 
-2. Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention map can completely highlight the tumor regions, which are consistent with the ground truth annotations.  
+Interpretablity is important to deep learning based algorithms for medical applications, fow which MIL methods often utilize a so-called heatmap to visualize the contribution of each location in a WSI to the classification decision. And we also illustrate the attention maps obtained by PMIL in the `vis` directory. We can observe that, the attention map can completely highlight the tumor regions, which are consistent with the ground truth annotations.  
 <div align=center><img src="https://github.com/Zero-We/PMIL/blob/main/docs/attention-map.png" width="800px"></div>
 <br/>
 
