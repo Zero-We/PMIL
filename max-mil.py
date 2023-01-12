@@ -16,7 +16,7 @@ import torchvision.transforms as transforms
 from torch.optim.lr_scheduler import MultiStepLR
 import torchvision.models as models
 from sklearn.metrics import roc_curve, auc
-from model import resnet34
+from model.model_maxmil import resnet34
 from collections import OrderedDict
 import time
 from Early_Stopping import EarlyStopping
