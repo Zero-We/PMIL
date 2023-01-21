@@ -75,11 +75,12 @@ This code is made available under the GPLv3 License and is available for non-com
 ## Citation  
 If you find our work useful in your research or if you use parts of this code please consider citing our paper.  
 ~~~
-@article{yu2022prototypical,
+@article{yu2023prototypical,
   title={Prototypical multiple instance learning for predicting lymph node metastasis of breast cancer from whole-slide pathological images},
-  author={Yu, Jin-Gang and Wu, Zihao and Ming, Yu and Deng, Shule and Li, Yuanqing and Ou, Caifeng and He, Chunjiang and Wang Baiye and Zhang, Pusheng and Wang, Yu},
+  author={Yu, Jin-Gang and Wu, Zihao and Ming, Yu and Deng, Shule and Li, Yuanqing and Ou, Caifeng and He, Chunjiang and Wang, Baiye and Zhang, Pusheng and Wang, Yu},
   journal={Medical Image Analysis},
-  year={2022},
+  pages={102748},
+  year={2023},
   publisher={Elsevier}
 }
 ~~~  
