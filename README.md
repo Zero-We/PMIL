@@ -44,7 +44,7 @@ python cluster.py
 <br/>
   
 
-Train the PMIL framework that encodes WSI by its compositions in terms of the frequencies of occurence of prototypes found inside. Here, we use patch features match against prototypes to get soft-assignment histogram, andd histograms of each patch in WSI will be aggregated by selective pooling module:  
+Train the PMIL framework that encodes WSI by its compositions in terms of the frequencies of occurence of prototypes found inside. Here, we use patch features match against prototypes to get soft-assignment histogram, and histograms of each patch in WSI will be aggregated by selective pooling module:  
 ~~~
 python pmil.py --save_model
 ~~~  
