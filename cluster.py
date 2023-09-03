@@ -30,7 +30,7 @@ def main():
     feat_paths = get_feature_path()
     
     # intra-slide clustering (WSI-level)
-    local_cluster_centroids, local_centroids_features, slideIDXs, gridIDXs = local_clustering(feature_paths, feature_columns)
+    local_cluster_centroids, local_centroids_features, slideIDXs, gridIDXs = local_clustering(feat_paths, feature_columns)
     
     # inter-slide clustering (whole dataset)
     global_cluster_centroids, global_centroids_features, ap = global_clustering(local_centroids_features)
@@ -53,27 +53,24 @@ def local_clustering(feature_paths, feature_columns):
     slideIDXs = []
     cluster_gridIDXs = []
     local_centroids_features = torch.Tensor()
-    
-    topn_gridIDXs = get_grid_index()
+
     for i, file in enumerate(feature_paths):
         wsi_name = file.split('.')[0]
         wsi_names.append(wsi_name)
         
         if args.feat_format == '.csv':
-            df = pd.read_csv(os.path.join(args.feature_dir, file), index_col=0)
+            df = pd.read_csv(os.path.join(args.feat_dir, file), index_col=0)
             feat = df[feature_columns].values
         elif args.feat_format == '.npy':
-            feat = np.load(os.path.join(args.feature_dir, file))
+            feat = np.load(os.path.join(args.feat_dir, file))
         elif args.feat_format == '.pt':
-            feat = torch.load(os.path.join(args.feature_dir, file))
-        topn_idx = np.array(topn_gridIDXs[wsi_name])
-        feat = feat[topn_idx, :]
+            feat = torch.load(os.path.join(args.feat_dir, file))
         
         begin = time.time()
-        similarity = euclidean_similarity(X_train)
+        similarity = euclidean_similarity(feat)
    
         # default using negative squared euclidean distance
-        af = AffinityPropagation(preference=args.preference, damping=args.damping, affinity='precomputed', random_state=24).fit(similarity)
+        ap = AffinityPropagation(preference=args.preference, damping=args.damping, affinity='precomputed', random_state=24).fit(similarity)
         cluster_centers_indices = ap.cluster_centers_indices_
         n_clusters = len(cluster_centers_indices)
         end = time.time()
@@ -82,7 +79,7 @@ def local_clustering(feature_paths, feature_columns):
         print("wsi {}\t File name: {}\t Use time: {:.2f}\t Number of cluster: {}".format(i + 1, file, usetime,n_clusters))
         slideIDXs.extend([i] * n_clusters)
         cluster_gridIDXs.extend(cluster_centers_indices)
-        local_centroids_feature = patch_features[cluster_centers_indices, :]
+        local_centroids_feature = feat[cluster_centers_indices, :]
         local_centroids_feature = local_centroids_feature.astype(np.float32)
         local_centroids_feature = torch.from_numpy(local_centroids_feature)
         local_centroids_features = torch.cat((local_centroids_features, local_centroids_feature), dim=0)
@@ -98,7 +95,8 @@ def local_clustering(feature_paths, feature_columns):
 
 def global_clustering(local_centroids_features):
     local_centroids_features = np.array(local_centroids_features)
-    ap = AffinityPropagation(preference=args.preference, damping=args.damping, random_state=24).fit(local_centroids_features)
+    similarity = euclidean_similarity(local_centroids_features)
+    ap = AffinityPropagation(preference=args.preference, damping=args.damping, random_state=24).fit(similarity)
     cluster_centers_indices = ap.cluster_centers_indices_
     labels = ap.labels_
     n_clusters = len(cluster_centers_indices)
@@ -148,7 +146,7 @@ def get_feature_path():
     lib = torch.load(args.lib, map_location='cpu')
     wsi_paths = lib['slides']
     wsi_names = [os.path.basename(wsi_path).split('.')[0] for wsi_path in wsi_paths]
-    feature_csv_files = [wsi_name + args.feat_format for wsi_name in wsi_names]
+    feat_paths = [wsi_name + args.feat_format for wsi_name in wsi_names]
     return feat_paths
     
 def get_grid_index():
