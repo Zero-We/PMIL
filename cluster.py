@@ -21,7 +21,6 @@ parser.add_argument('--local_cluster', type=str, default='cluster/local_cluster.
 parser.add_argument('--lamb', type=float, default=0.25)
 parser.add_argument('--feat_format', type=str, choices = ['.csv', '.npy', '.pt'], default='.csv')
 
-
 global args
 args = parser.parse_args()
 
@@ -44,8 +43,6 @@ def main():
 
     # save global cluster centroids index
     save_global_centroids_idx(global_cluster_centroids, slideIDXs, gridIDXs)
-
-
 
 def local_clustering(feature_paths, feature_columns):
     local_cluster_centroids = []
@@ -91,12 +88,10 @@ def local_clustering(feature_paths, feature_columns):
         args.local_cluster)
     return local_cluster_centroids, local_centroids_features, slideIDXs, cluster_gridIDXs
 
-
-
 def global_clustering(local_centroids_features):
     local_centroids_features = np.array(local_centroids_features)
     similarity = euclidean_similarity(local_centroids_features)
-    ap = AffinityPropagation(preference=args.preference, damping=args.damping, random_state=24).fit(similarity)
+    ap = AffinityPropagation(preference=args.preference, damping=args.damping, affinity='precomputed', random_state=24).fit(similarity)
     cluster_centers_indices = ap.cluster_centers_indices_
     labels = ap.labels_
     n_clusters = len(cluster_centers_indices)
@@ -105,8 +100,6 @@ def global_clustering(local_centroids_features):
     global_centroids_features = local_centroids_features[global_cluster_centroids, :]
     global_centroids_features = global_centroids_features.astype(np.float32)
     return global_cluster_centroids, global_centroids_features, ap
-
-
 
 def save_global_centroids_idx(global_cluster_centroids, slideIDXs, gridIDXs):
     centroids_slideIDXs = []
@@ -119,7 +112,6 @@ def save_global_centroids_idx(global_cluster_centroids, slideIDXs, gridIDXs):
         'slideIDX': centroids_slideIDXs,
         'gridIDX': centroids_idx},
         args.prototypes_index)
-
 
 def cosine_distance(matrix1,matrix2):
     matrix1_matrix2 = np.dot(matrix1, matrix2.transpose())
